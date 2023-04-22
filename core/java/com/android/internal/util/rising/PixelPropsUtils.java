@@ -236,9 +236,9 @@ public class PixelPropsUtils {
         			 || Arrays.asList(packagesToChangeOP9R).contains(pkgName)
         			 || Arrays.asList(packagesToChange11T).contains(pkgName)
         			 || Arrays.asList(packagesToChangeF4).contains(pkgName);
-        if (pkgName.startsWith("com.google.") || !sIsFinsky || !sNeedsWASpoof || !sIsGms
-                || Arrays.asList(extraPackagesToChange).contains(pkgName)
-                || !isGameSpoof) {
+        if (pkgName.startsWith("com.google.") && !sIsFinsky && !sNeedsWASpoof && !sIsGms
+                || !isGameSpoof
+                || Arrays.asList(extraPackagesToChange).contains(pkgName)) {
 
             boolean isPixelDevice = Arrays.asList(pixelCodenames).contains(SystemProperties.get(DEVICE));
                 
@@ -274,8 +274,8 @@ public class PixelPropsUtils {
                 setPropValue(key, value);
             }
             // Set proper indexing fingerprint
-            if (pkgName.contains("settings.intelligence")) {
-                setBuildField("FINGERPRINT", Build.VERSION.INCREMENTAL);
+            if (pkgName.contains("com.google.android.settings.intelligence")) {
+                setPropValue("FINGERPRINT", String.valueOf(Build.TIME));
             }
         } else {
 
