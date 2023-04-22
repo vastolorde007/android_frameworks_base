@@ -229,8 +229,16 @@ public class PixelPropsUtils {
         if (sNeedsWASpoof || sIsGms) {
              spoofBuildGms();
         }
+        boolean isGameSpoof = Arrays.asList(packagesToChangeROG1).contains(pkgName)
+        			 || Arrays.asList(packagesToChangeROG3).contains(pkgName)
+        			 || Arrays.asList(packagesToChangeXP5).contains(pkgName)
+        			 || Arrays.asList(packagesToChangeOP8P).contains(pkgName)
+        			 || Arrays.asList(packagesToChangeOP9R).contains(pkgName)
+        			 || Arrays.asList(packagesToChange11T).contains(pkgName)
+        			 || Arrays.asList(packagesToChangeF4).contains(pkgName);
         if (pkgName.startsWith("com.google.") || !sIsFinsky || !sNeedsWASpoof || !sIsGms
-                || Arrays.asList(extraPackagesToChange).contains(pkgName)) {
+                || Arrays.asList(extraPackagesToChange).contains(pkgName)
+                || !isGameSpoof) {
 
             boolean isPixelDevice = Arrays.asList(pixelCodenames).contains(SystemProperties.get(DEVICE));
                 
