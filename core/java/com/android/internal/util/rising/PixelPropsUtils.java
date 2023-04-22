@@ -188,7 +188,7 @@ public class PixelPropsUtils {
         propsToChangePixelXL.put("DEVICE", "marlin");
         propsToChangePixelXL.put("PRODUCT", "marlin");
         propsToChangePixelXL.put("MODEL", "Pixel XL");
-        propsToChangePixelXL.put("FINGERPRINT", "google/marlin/marlin:10/QP1A.191005.007.A3/5972272:user/release-keys");
+        propsToChangePixelXL.put("FINGERPRINT", "google/marlin/marlin:7.1.2/NJH47F/4146041:user/release-keys");
         propsToChangeROG1 = new HashMap<>();
         propsToChangeROG1.put("MODEL", "ASUS_Z01QD");
         propsToChangeROG1.put("MANUFACTURER", "asus");
@@ -248,12 +248,9 @@ public class PixelPropsUtils {
             } else {
                 if (Arrays.asList(packagesToChangePixel7Pro).contains(pkgName)) {
                     propsToChange.putAll(propsToChangePixel7Pro);
-                } else if (Arrays.asList(packagesToChangePixelXL).contains(pkgName)) {
-                    if (isPixelDevice) return;
-                    propsToChange.putAll(propsToChangePixelXL);
                 } else {
                     if (isPixelDevice) return;
-                    propsToChange.putAll(propsToChangePixel5);
+                    propsToChange.putAll(propsToChangePixelXL);
                 }
             }
 
