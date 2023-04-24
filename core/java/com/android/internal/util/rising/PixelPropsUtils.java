@@ -60,20 +60,6 @@ public class PixelPropsUtils {
             "com.google.android.inputmethod.latin"
     };
 
-    // Packages to Spoof as Pixel XL
-    private static final String[] packagesToChangePixelXL = {
-            "com.samsung.accessory",
-            "com.samsung.accessory.fridaymgr",
-            "com.samsung.accessory.berrymgr",
-            "com.samsung.accessory.neobeanmgr",
-            "com.samsung.android.app.watchmanager",
-            "com.samsung.android.geargplugin",
-            "com.samsung.android.gearnplugin",
-            "com.samsung.android.modenplugin",
-            "com.samsung.android.neatplugin",
-            "com.samsung.android.waterplugin"
-    };
-
     // Extra Packages to Spoof
     private static final String[] extraPackagesToChange = {
             "com.android.chrome",
@@ -188,7 +174,7 @@ public class PixelPropsUtils {
         propsToChangePixelXL.put("DEVICE", "marlin");
         propsToChangePixelXL.put("PRODUCT", "marlin");
         propsToChangePixelXL.put("MODEL", "Pixel XL");
-        propsToChangePixelXL.put("FINGERPRINT", "google/marlin/marlin:10/QP1A.191005.007.A3/5972272:user/release-keys");
+        propsToChangePixelXL.put("FINGERPRINT", "google/marlin/marlin:7.1.2/NJH47F/4146041:user/release-keys");
         propsToChangeROG1 = new HashMap<>();
         propsToChangeROG1.put("MODEL", "ASUS_Z01QD");
         propsToChangeROG1.put("MANUFACTURER", "asus");
@@ -220,16 +206,24 @@ public class PixelPropsUtils {
             return;
         }
         Map<String, Object> propsToChange = new HashMap<>();
-        sIsFinsky = pkgName.equals("com.android.vending");
+        sIsFinsky = pkgName.contains("com.android.vending");
         sNeedsWASpoof = List.of("pixelmigrate", "restore", "snapchat").stream().anyMatch(pkgName::contains);
-        if (pkgName.equals("com.google.android.gms")) {
+        if (pkgName.contains("com.google.android.gms")) {
             final String processName = Application.getProcessName().toLowerCase();
-            sIsGms = List.of("com.google.android.gms.persistent", "com.google.android.gms.unstable").stream().anyMatch(processName::contains);
+            sIsGms = List.of(".persistent", ".unstable").stream().anyMatch(processName::contains);
         }
         if (sNeedsWASpoof || sIsGms) {
              spoofBuildGms();
         }
-        if (pkgName.startsWith("com.google.") || !sIsFinsky || !sNeedsWASpoof || !sIsGms
+        boolean isGameSpoof = Arrays.asList(packagesToChangeROG1).contains(pkgName)
+        			 || Arrays.asList(packagesToChangeROG3).contains(pkgName)
+        			 || Arrays.asList(packagesToChangeXP5).contains(pkgName)
+        			 || Arrays.asList(packagesToChangeOP8P).contains(pkgName)
+        			 || Arrays.asList(packagesToChangeOP9R).contains(pkgName)
+        			 || Arrays.asList(packagesToChange11T).contains(pkgName)
+        			 || Arrays.asList(packagesToChangeF4).contains(pkgName);
+        if (pkgName.startsWith("com.google.") && !sIsFinsky && !sNeedsWASpoof && !sIsGms
+                || !isGameSpoof
                 || Arrays.asList(extraPackagesToChange).contains(pkgName)) {
 
             boolean isPixelDevice = Arrays.asList(pixelCodenames).contains(SystemProperties.get(DEVICE));
@@ -248,12 +242,10 @@ public class PixelPropsUtils {
             } else {
                 if (Arrays.asList(packagesToChangePixel7Pro).contains(pkgName)) {
                     propsToChange.putAll(propsToChangePixel7Pro);
-                } else if (Arrays.asList(packagesToChangePixelXL).contains(pkgName)) {
-                    if (isPixelDevice) return;
-                    propsToChange.putAll(propsToChangePixelXL);
                 } else {
-                    if (isPixelDevice) return;
-                    propsToChange.putAll(propsToChangePixel5);
+                    boolean spoofALl = SystemProperties.getBoolean("persist.sys.pixelprops.spoofAll", false);
+                    if (!spoofALl) return;
+                    propsToChange.putAll(propsToChangePixelXL);
                 }
             }
 
@@ -269,8 +261,8 @@ public class PixelPropsUtils {
                 setPropValue(key, value);
             }
             // Set proper indexing fingerprint
-            if (pkgName.contains("settings.intelligence")) {
-                setBuildField("FINGERPRINT", Build.VERSION.INCREMENTAL);
+            if (pkgName.contains("com.google.android.settings.intelligence")) {
+                setPropValue("FINGERPRINT", String.valueOf(Build.TIME));
             }
         } else {
 
@@ -393,16 +385,16 @@ public class PixelPropsUtils {
     private static void spoofBuildGms() {
         // Alter most build properties for cts profile match checks
         setBuildField("BRAND", "google");
-        setBuildField("PRODUCT", "walleye");
-        setBuildField("MODEL", "Pixel 2");
+        setBuildField("PRODUCT", "marlin");
+        setBuildField("MODEL", "Pixel XL");
     	setBuildField("MANUFACTURER", "Google");
-        setBuildField("DEVICE", "walleye");
-        setBuildField("FINGERPRINT", "google/walleye/walleye:8.1.0/OPM1.171019.011/4448085:user/release-keys");
-        setBuildField("ID", "OPM1.171019.011");
+        setBuildField("DEVICE", "marlin");
+        setBuildField("FINGERPRINT", "google/marlin/marlin:7.1.2/NJH47F/4146041:user/release-keys");
+        setBuildField("ID", "NJH47F");
         setBuildField("TYPE", "user");
         setBuildField("TAGS", "release-keys");
-        setVersionField("DEVICE_INITIAL_SDK_INT", Build.VERSION_CODES.S);
-        setVersionFieldString("SECURITY_PATCH", "2017-12-05");
+        setVersionField("DEVICE_INITIAL_SDK_INT", Build.VERSION_CODES.N_MR1);
+        setVersionFieldString("SECURITY_PATCH", "2017-08-05");
     }
 
     private static boolean isCallerSafetyNet() {
